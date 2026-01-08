@@ -1,9 +1,8 @@
 import { Client, Transaction, Wallet, convertStringToHex } from 'xrpl';
 
-// Test RLUSD details - Custom token for hackathon demo
 const CURRENCY_CODE = 'RLUSD';
-const CURRENCY_CODE_HEX = convertStringToHex('RLUSD').padEnd(40, '0'); // Hex format for non-standard codes
-const CURRENCY_ISSUER = 'rHTfLCQULr4HLGnyoDKgN8jNzLGYVhth2d'; // Your custom RLUSD issuer
+const CURRENCY_CODE_HEX = convertStringToHex('RLUSD').padEnd(40, '0'); 
+const CURRENCY_ISSUER = 'rHTfLCQULr4HLGnyoDKgN8jNzLGYVhth2d'; 
 const XRPL_TESTNET_URL = 'wss://s.altnet.rippletest.net:51233';
 
 class XRPLService {
@@ -25,19 +24,16 @@ class XRPLService {
     }
   }
 
-  // Create a new wallet (for new users)
   async createWallet(): Promise<{ wallet: Wallet; balance: number }> {
     const client = await this.connect();
     const { wallet, balance } = await client.fundWallet();
     return { wallet, balance: balance || 0 };
   }
 
-  // Import wallet from seed
   importWallet(seed: string): Wallet {
     return Wallet.fromSeed(seed);
   }
 
-  // Set up USD trustline
   async setupTrustline(wallet: Wallet): Promise<any> {
     const client = await this.connect();
 
@@ -45,11 +41,11 @@ class XRPLService {
       TransactionType: 'TrustSet',
       Account: wallet.address,
       LimitAmount: {
-        currency: CURRENCY_CODE_HEX, // Use hex format for non-standard codes
+        currency: CURRENCY_CODE_HEX,
         issuer: CURRENCY_ISSUER,
-        value: '1000000000' // Large limit
+        value: '1000000000'
       },
-      Flags: 131072 // tfSetNoRipple
+      Flags: 131072 
     };
 
     const prepared = await client.autofill(trustSetTx);
@@ -59,7 +55,6 @@ class XRPLService {
     return result;
   }
 
-  // Send USD payment
   async sendRLUSDPayment(
     senderWallet: Wallet,
     recipientAddress: string,
@@ -72,7 +67,7 @@ class XRPLService {
       Account: senderWallet.address,
       Destination: recipientAddress,
       Amount: {
-        currency: CURRENCY_CODE_HEX, // Use hex format for non-standard codes
+        currency: CURRENCY_CODE_HEX,
         issuer: CURRENCY_ISSUER,
         value: amount
       }
@@ -85,7 +80,6 @@ class XRPLService {
     return result;
   }
 
-  // Get USD balance
   async getRLUSDBalance(walletAddress: string): Promise<string> {
     try {
       const client = await this.connect();
@@ -102,7 +96,6 @@ class XRPLService {
 
       return usdLine ? usdLine.balance : '0';
     } catch (error: any) {
-      // Return 0 for accounts not yet activated
       if (error.data?.error === 'actNotFound' || error.message?.includes('Account not found')) {
         console.log('Account not yet activated, returning 0 balance');
         return '0';
@@ -112,7 +105,6 @@ class XRPLService {
     }
   }
 
-  // Get transaction details
   async getTransaction(hash: string): Promise<any> {
     const client = await this.connect();
 
