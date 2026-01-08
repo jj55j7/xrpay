@@ -110,7 +110,7 @@ node setup-student-wallet.js <STUDENT_SEED> <ISSUER_ADDRESS>
 
 Example:
 ```bash
-node setup-student-wallet.js sEdStGfKgG7Jh8t4uMJJZbfPwsvqkij rHTfLCQULr4HLGnyoDKgN8jNzLGYVhtj90
+node setup-student-wallet.js sEdStGfKgG7Jh8t4uMJJZbfPwsvqkij rHTfQLCULr4HLGnyoDKgN8jNzLGYVhtj90
 ```
 
 Similar to parent setup but optimized for student accounts.
@@ -125,7 +125,7 @@ node issue-rlusd.js <ISSUER_SEED> <PARENT_ADDRESS> <AMOUNT>
 
 Example:
 ```bash
-node issue-rlusd.js sEdTtpjmp8nViTW9LViMx3tDfh6nvWW rhAnszo7fmmhP4oHXHRB20mZV1Zdg4yZZA 10000
+node issue-rlusd.js sEdTtpjmp8nViTW9LViMx3tDfh6nvWW rhAnszo7fhhmP4oHXHRB20mZV1Zdg4yZZA 10000
 ```
 
 This issues the specified amount of RLUSD to the parent wallet.
