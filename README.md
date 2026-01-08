@@ -83,7 +83,7 @@ This script generates a new issuer wallet and outputs the issuer seed and addres
 
 ### 2. Setup Parent Wallet
 
-Set up a parent wallet with RLUSD trustline:
+Set up a parent wallet with RLUSD trustline. PARENT_SEED can be found in the dashboard of the app(Parent View):
 
 ```bash
 node setup-parent-wallet.js <PARENT_SEED> <ISSUER_ADDRESS>
@@ -102,7 +102,7 @@ This process:
 
 ### 3. Setup Student Wallet
 
-Set up a student wallet with RLUSD trustline:
+Set up a student wallet with RLUSD trustline. STUDENT_SEED can be found in the Recevie Money feature of the app(Student View):
 
 ```bash
 node setup-student-wallet.js <STUDENT_SEED> <ISSUER_ADDRESS>
@@ -117,7 +117,7 @@ Similar to parent setup but optimized for student accounts.
 
 ### 4. Issue RLUSD to Parent
 
-Issue RLUSD from the issuer to the parent wallet:
+Issue RLUSD from the issuer to the parent wallet. PARENT_ADDRESS can be found in the dashboard feature of the app(Parent View):
 
 ```bash
 node issue-rlusd.js <ISSUER_SEED> <PARENT_ADDRESS> <AMOUNT>
@@ -125,7 +125,7 @@ node issue-rlusd.js <ISSUER_SEED> <PARENT_ADDRESS> <AMOUNT>
 
 Example:
 ```bash
-node issue-rlusd.js sEdTtohmp8nViTW8LViMx3tDfh6nvWW rhAnszo7fgghP4oHXHRB20mZV1Zdg4yZZA 10000
+node issue-rlusd.js sEdTtpjmp8nViTW9LViMx3tDfh6nvWW rhAnszo7fmmhP4oHXHRB20mZV1Zdg4yZZA 10000
 ```
 
 This issues the specified amount of RLUSD to the parent wallet.
