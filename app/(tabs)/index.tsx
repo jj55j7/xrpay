@@ -45,12 +45,10 @@ export default function HomeScreen() {
         return;
       }
 
-      // Fetch user's wallet address from users collection
       try {
         const userDoc = await getDoc(doc(db, 'users', user.uid));
         const userData = userDoc.data();
         if (userData?.walletAddress) {
-          // Fetch live RLUSD balance from blockchain
           let liveBalance = userData.balance || '0.00';
           try {
             const blockchainBalance = await xrplService.getRLUSDBalance(userData.walletAddress);
@@ -71,13 +69,11 @@ export default function HomeScreen() {
         console.error('Error fetching wallet data:', userError);
       }
 
-      // Fetch transactions received by this student
       try {
         console.log('🔍 Fetching transactions for student:', user.uid);
         console.log('   Student UID length:', user.uid.length);
         console.log('   Student UID type:', typeof user.uid);
         
-        // First, let's see ALL transactions to debug
         const allTransactionsQuery = query(
           collection(db, 'transactions'),
           orderBy('date', 'desc')
@@ -93,7 +89,6 @@ export default function HomeScreen() {
           console.log('      Match?', data.toId === user.uid);
         });
         
-        // Now query for this specific student
         const transactionsQuery = query(
           collection(db, 'transactions'),
           where('toId', '==', user.uid),
@@ -119,13 +114,11 @@ export default function HomeScreen() {
         console.error('   Error code:', txError.code);
         console.error('   Error message:', txError.message);
         
-        // Check if it's a missing index error
         if (txError.code === 'failed-precondition' || txError.message?.includes('index')) {
           console.error('\n🔗 MISSING FIRESTORE INDEX!');
           console.error('   Create the index by clicking the link in this error:');
           console.error('   ' + txError.message);
           
-          // Extract and show the link if available
           const linkMatch = txError.message?.match(/(https:\/\/console\.firebase\.google\.com\/[^\s]+)/);
           if (linkMatch) {
             console.error('\n   Direct link: ' + linkMatch[1]);
@@ -174,7 +167,6 @@ export default function HomeScreen() {
     >
       <Text style={styles.title}>Your Wallet</Text>
 
-      {/* Balance Card */}
       {walletData && (
         <>
           <View style={styles.balanceCard}>
@@ -190,7 +182,6 @@ export default function HomeScreen() {
             </TouchableOpacity>
           </View>
 
-          {/* Quick Stats */}
           <View style={styles.statsContainer}>
             <View style={styles.statCard}>
               <Ionicons name="trending-up" size={24} color="#34C759" />
@@ -204,7 +195,6 @@ export default function HomeScreen() {
             </View>
           </View>
 
-          {/* Recent Transactions */}
           <View style={styles.recentSection}>
             <Text style={styles.sectionTitle}>Recent Transactions</Text>
             {transactions.length === 0 ? (
@@ -230,7 +220,6 @@ export default function HomeScreen() {
         </>
       )}
 
-      {/* Receive Money Modal */}
       <Modal
         visible={showReceiveModal}
         transparent={true}

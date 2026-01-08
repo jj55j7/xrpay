@@ -1,25 +1,20 @@
 import xrpl from 'xrpl';
 
-// XRPL Testnet endpoint
 const TESTNET_URL = 'wss://s.altnet.rippletest.net:51233';
 
-// Create and return a new XRPL client
 export function getClient() {
   return new xrpl.Client(TESTNET_URL);
 }
 
-// Generate a new wallet (for demo/testing)
 export function generateWallet() {
   const wallet = xrpl.Wallet.generate();
   return wallet;
 }
 
-// Import a wallet from seed
 export function importWallet(seed: string) {
   return xrpl.Wallet.fromSeed(seed);
 }
 
-// Example: Send a payment (XRP or token)
 export async function sendPayment({
   client,
   senderWallet,
@@ -54,7 +49,6 @@ export async function sendPayment({
   return result;
 }
 
-// Add a trustline for a token (e.g., RLUSD)
 export async function addTrustline({
   client,
   wallet,
@@ -83,7 +77,6 @@ export async function addTrustline({
   return result;
 }
 
-// Get RLUSD/token balance
 export async function getTokenBalance({
   client,
   address,

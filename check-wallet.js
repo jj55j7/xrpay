@@ -1,6 +1,3 @@
-// Check wallet status and balances
-// Usage: node check-wallet.js YOUR_WALLET_ADDRESS
-
 const xrpl = require('xrpl');
 
 const RLUSD_ISSUER = 'rQhMct2fv4Vc4KRjRgMrxa8xPN9ZX91LKV';
@@ -14,7 +11,6 @@ async function checkWallet(address) {
     console.log('📍 Checking wallet:', address);
     console.log('');
 
-    // Check XRP balance
     try {
       const xrpBalance = await client.getXrpBalance(address);
       console.log('✅ XRP Balance:', xrpBalance, 'XRP');
@@ -22,7 +18,6 @@ async function checkWallet(address) {
       console.log('❌ XRP Balance: Account not found or unfunded');
     }
 
-    // Check trustlines
     console.log('\n📋 Checking trustlines...');
     try {
       const trustlines = await client.request({
@@ -60,7 +55,6 @@ async function checkWallet(address) {
   }
 }
 
-// Get address from command line
 const address = process.argv[2];
 
 if (!address) {

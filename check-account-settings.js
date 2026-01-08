@@ -1,6 +1,3 @@
-// Check account settings and flags
-// Usage: node check-account-settings.js ADDRESS
-
 const xrpl = require('xrpl');
 
 async function checkAccount(address) {
@@ -22,8 +19,7 @@ async function checkAccount(address) {
     console.log('\n📋 Account Flags (raw):', flags);
     console.log('Flags breakdown:');
     
-    // Check specific flags
-    const asfDefaultRipple = 0x00800000; // 8388608
+    const asfDefaultRipple = 0x00800000; 
     const hasDefaultRipple = (flags & asfDefaultRipple) !== 0;
     
     console.log('  - DefaultRipple:', hasDefaultRipple ? '✅ ENABLED' : '❌ DISABLED');

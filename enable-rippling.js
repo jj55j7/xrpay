@@ -1,6 +1,3 @@
-// Enable DefaultRipple on issuer account to allow token transfers between holders
-// Usage: node enable-rippling.js ISSUER_SEED
-
 const xrpl = require('xrpl');
 
 async function enableRippling(issuerSeed) {
@@ -12,13 +9,12 @@ async function enableRippling(issuerSeed) {
     const issuerWallet = xrpl.Wallet.fromSeed(issuerSeed);
     console.log('✅ Issuer wallet loaded:', issuerWallet.address);
 
-    // Set account flags to enable DefaultRipple
     console.log('⚙️  Setting DefaultRipple flag...');
     
     const accountSetTx = {
       TransactionType: 'AccountSet',
       Account: issuerWallet.address,
-      SetFlag: 8 // asfDefaultRipple
+      SetFlag: 8
     };
 
     const prepared = await client.autofill(accountSetTx);

@@ -29,8 +29,6 @@ export default function Login() {
     try {
       const auth = getAuth(firebaseApp);
       await signInWithEmailAndPassword(auth, form.email, form.password);
-      // User is authenticated, onAuthStateChanged in root layout will handle routing
-      // No manual navigation needed - let the auth listener route based on role
     } catch (e: any) {
       Alert.alert('Login Error', e?.message || 'Unknown error');
       setLoading(false);

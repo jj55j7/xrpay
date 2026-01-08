@@ -3,13 +3,13 @@ import { getAuth } from 'firebase/auth';
 import { addDoc, collection, getDocs, getFirestore, query, where } from 'firebase/firestore';
 import React, { useState } from 'react';
 import {
-    ActivityIndicator,
-    Alert,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  ActivityIndicator,
+  Alert,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from 'react-native';
 
 export default function ConnectParentScreen() {
@@ -36,7 +36,6 @@ export default function ConnectParentScreen() {
         return;
       }
 
-      // 1. Check if parent exists
       const usersRef = collection(db, 'users');
       const q = query(usersRef, where('email', '==', parentEmail.trim().toLowerCase()));
       const querySnapshot = await getDocs(q);
@@ -49,13 +48,11 @@ export default function ConnectParentScreen() {
       const parentDoc = querySnapshot.docs[0];
       const parentData = parentDoc.data();
 
-      // 2. Check if parent has correct role
       if (parentData.role !== 'parent') {
         Alert.alert('Error', 'This user is not registered as a parent');
         return;
       }
 
-      // 3. Check if connection already exists
       const existingConnections = await getDocs(
         query(collection(db, 'connection_requests'), 
           where('studentId', '==', studentId),
@@ -69,13 +66,12 @@ export default function ConnectParentScreen() {
         return;
       }
 
-      // 4. Create connection request
       await addDoc(collection(db, 'connection_requests'), {
         studentId,
         parentId: parentDoc.id,
         studentEmail: auth.currentUser?.email,
         parentEmail: parentEmail.trim().toLowerCase(),
-        status: 'pending', // pending, approved, rejected
+        status: 'pending',
         createdAt: new Date(),
         studentName: auth.currentUser?.displayName || 'Student'
       });

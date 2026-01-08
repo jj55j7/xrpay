@@ -4,30 +4,30 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { getAuth, signOut } from 'firebase/auth';
 import {
-    arrayUnion,
-    collection,
-    doc,
-    getDoc,
-    getDocs,
-    getFirestore,
-    orderBy,
-    query,
-    updateDoc,
-    where
+  arrayUnion,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  getFirestore,
+  orderBy,
+  query,
+  updateDoc,
+  where
 } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import {
-    ActivityIndicator,
-    Alert,
-    Button,
-    Modal,
-    RefreshControl,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  ActivityIndicator,
+  Alert,
+  Button,
+  Modal,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from 'react-native';
 
 interface Student {
@@ -67,7 +67,6 @@ export default function ParentDashboard() {
   const [xrpBalance, setXrpBalance] = useState('0.00');
   const [parentWalletSeed, setParentWalletSeed] = useState('');
   
-  // Add these states
   const [pendingRequests, setPendingRequests] = useState<ConnectionRequest[]>([]);
   const [loadingRequests, setLoadingRequests] = useState(true);
   const [showAddStudentModal, setShowAddStudentModal] = useState(false);
@@ -80,7 +79,6 @@ export default function ParentDashboard() {
     fetchPendingRequests();
   }, []);
 
-  // Add this function
   const fetchPendingRequests = async () => {
     try {
       const auth = getAuth(firebaseApp);
@@ -109,7 +107,6 @@ export default function ParentDashboard() {
     }
   };
 
-  // Add this function to handle approval
   const handleApproveRequest = async (requestId: string, studentId: string) => {
     try {
       const auth = getAuth(firebaseApp);
@@ -121,41 +118,36 @@ export default function ParentDashboard() {
         return;
       }
 
-      // Update connection request
       await updateDoc(doc(db, 'connection_requests', requestId), {
         status: 'approved',
         approvedAt: new Date()
       });
 
-      // Update parent's studentIds array
       const parentRef = doc(db, 'users', parentId);
       await updateDoc(parentRef, {
         studentIds: arrayUnion(studentId)
       });
 
-      // Update student's parentIds array
       const studentRef = doc(db, 'users', studentId);
       await updateDoc(studentRef, {
         parentIds: arrayUnion(parentId)
       });
 
       Alert.alert('Success', 'Student connection approved!');
-      fetchPendingRequests(); // Refresh
-      fetchData(); // Refresh student list
+      fetchPendingRequests();
+      fetchData();
     } catch (error) {
       console.error('Error approving request:', error);
       Alert.alert('Error', 'Failed to approve request');
     }
   };
 
-  // Add function to handle adding student by wallet address
   const handleAddStudentByWallet = async () => {
     if (!newStudentWallet.trim()) {
       Alert.alert('Error', 'Please enter a wallet address');
       return;
     }
 
-    // Validate wallet address format
     if (!newStudentWallet.startsWith('r') || newStudentWallet.length < 25 || newStudentWallet.length > 35) {
       Alert.alert('Invalid Address', 'Please enter a valid XRPL wallet address');
       return;
@@ -174,7 +166,6 @@ export default function ParentDashboard() {
 
       console.log('🔍 Searching for student with wallet:', newStudentWallet);
 
-      // Search for student with this wallet address
       const usersQuery = query(
         collection(db, 'users'),
         where('walletAddress', '==', newStudentWallet.trim()),
@@ -196,7 +187,6 @@ export default function ParentDashboard() {
 
       console.log('✅ Found student:', studentData.name, '(UID:', studentId, ')');
 
-      // Check if already connected
       if (studentData.parentIds?.includes(parentId)) {
         Alert.alert('Already Connected', `You are already connected to ${studentData.name}`);
         setShowAddStudentModal(false);
@@ -204,13 +194,11 @@ export default function ParentDashboard() {
         return;
       }
 
-      // Update parent's studentIds array
       const parentRef = doc(db, 'users', parentId);
       await updateDoc(parentRef, {
         studentIds: arrayUnion(studentId)
       });
 
-      // Update student's parentIds array
       const studentRef = doc(db, 'users', studentId);
       await updateDoc(studentRef, {
         parentIds: arrayUnion(parentId)
@@ -221,10 +209,9 @@ export default function ParentDashboard() {
         `Successfully connected to ${studentData.name}!\n\nYou can now send them money.`
       );
 
-      // Reset and refresh
       setShowAddStudentModal(false);
       setNewStudentWallet('');
-      fetchData(); // Refresh student list
+      fetchData(); 
     } catch (error: any) {
       console.error('❌ Error adding student:', error);
       Alert.alert('Error', error.message || 'Failed to add student');
@@ -241,17 +228,14 @@ export default function ParentDashboard() {
 
       if (!user) return;
 
-      // Fetch parent user document
       const parentDoc = await getDoc(doc(db, 'users', user.uid));
       const parentData = parentDoc.data();
 
-      // Set parent info
       if (parentData) {
         setParentName(parentData.name || 'Parent');
         setParentWalletAddress(parentData.walletAddress || '');
         setParentWalletSeed(parentData.walletSeed || '');
         
-        // Fetch live RLUSD balance from blockchain
         if (parentData.walletAddress) {
           try {
             const liveBalance = await xrplService.getRLUSDBalance(parentData.walletAddress);
@@ -269,7 +253,6 @@ export default function ParentDashboard() {
       }
 
       if (parentData?.studentIds && Array.isArray(parentData.studentIds)) {
-        // Fetch all connected students
         const studentsList: Student[] = [];
         for (const studentId of parentData.studentIds) {
           const studentDoc = await getDoc(doc(db, 'users', studentId));
@@ -286,7 +269,6 @@ export default function ParentDashboard() {
         setStudents(studentsList);
       }
 
-      // Fetch transactions for this parent
       const transactionsQuery = query(
         collection(db, 'transactions'),
         where('fromId', '==', user.uid),
@@ -356,7 +338,6 @@ export default function ParentDashboard() {
     >
       <Text style={styles.title}>Parent Dashboard</Text>
 
-      {/* Parent Wallet Card */}
       <View style={styles.walletCard}>
         <View style={styles.walletHeader}>
           <View>
@@ -391,7 +372,6 @@ export default function ParentDashboard() {
         )}
       </View>
 
-      {/* Total Sent Card */}
       <View style={styles.totalCard}>
         <Ionicons name="trending-up" size={32} color="#34C759" />
         <View style={styles.totalInfo}>
@@ -400,7 +380,6 @@ export default function ParentDashboard() {
         </View>
       </View>
 
-      {/* Students List */}
       <Text style={styles.sectionTitle}>My Students</Text>
       {students.length === 0 ? (
         <Text style={styles.noDataText}>No connected students yet</Text>
@@ -430,7 +409,6 @@ export default function ParentDashboard() {
         ))
       )}
 
-      {/* Add Student Button */}
       <TouchableOpacity 
         style={styles.addStudentButton}
         onPress={() => setShowAddStudentModal(true)}
@@ -439,7 +417,6 @@ export default function ParentDashboard() {
         <Text style={styles.addStudentText}>Add New Student</Text>
       </TouchableOpacity>
 
-      {/* Add Student Modal */}
       <Modal
         visible={showAddStudentModal}
         transparent={true}
@@ -496,7 +473,6 @@ export default function ParentDashboard() {
         </View>
       </Modal>
 
-      {/* Pending Connection Requests */}
       {pendingRequests.length > 0 && (
         <View style={styles.requestsContainer}>
           <Text style={styles.sectionTitle}>Pending Connection Requests</Text>
@@ -528,7 +504,6 @@ export default function ParentDashboard() {
         </View>
       )}
 
-      {/* Recent Activity */}
       <Text style={styles.sectionTitle}>Recent Activity</Text>
       {transactions.length === 0 ? (
         <Text style={styles.noDataText}>No transactions yet</Text>
@@ -549,7 +524,6 @@ export default function ParentDashboard() {
         </View>
       )}
 
-      {/* Logout Button */}
       <View style={styles.logoutContainer}>
         <Button 
           title={signingOut ? 'Signing Out...' : 'Logout'} 
@@ -874,7 +848,6 @@ const styles = StyleSheet.create({
     marginTop: 8,
     marginBottom: 20,
   },
-  // Modal styles
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',

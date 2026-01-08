@@ -14,7 +14,6 @@ interface Student {
   walletAddress: string;
 }
 
-// Preset amounts
 const PRESET_AMOUNTS = ['50', '100', '200', '500'];
 
 export default function SendMoney() {
@@ -34,7 +33,6 @@ export default function SendMoney() {
   }, []);
 
   useEffect(() => {
-    // Auto-select student if studentId parameter is provided
     if (studentId && students.length > 0) {
       console.log('🎯 Auto-selecting student:', studentId);
       setSelectedStudent(studentId);
@@ -52,7 +50,6 @@ export default function SendMoney() {
         return;
       }
 
-      // Fetch parent user document to get studentIds
       const parentDoc = await getDoc(doc(db, 'users', user.uid));
       const parentData = parentDoc.data();
 
@@ -65,7 +62,6 @@ export default function SendMoney() {
       if (parentData?.studentIds && Array.isArray(parentData.studentIds)) {
         console.log('📋 Found', parentData.studentIds.length, 'connected student(s)');
         
-        // Fetch all connected students
         const studentsList: Student[] = [];
         for (const studentId of parentData.studentIds) {
           const studentDoc = await getDoc(doc(db, 'users', studentId));
@@ -93,16 +89,13 @@ export default function SendMoney() {
   };
 
   const validateAddress = (address: string): boolean => {
-    // Basic XRPL address validation
     if (!address || address.length < 25 || address.length > 35) return false;
     if (!address.startsWith('r')) return false;
-    // Check for invalid characters (0, O, I, l are not in base58)
     if (/[0OIl]/.test(address)) return false;
     return true;
   };
 
   const handleSend = async () => {
-    // Validate recipient
     let recipientAddress = '';
     let recipientName = '';
 
@@ -114,7 +107,6 @@ export default function SendMoney() {
       
       recipientAddress = manualAddress.trim();
       
-      // Validate address format
       if (!validateAddress(recipientAddress)) {
         Alert.alert(
           'Invalid Address',
@@ -149,7 +141,6 @@ export default function SendMoney() {
       return;
     }
     
-    // Format display name for confirmation
     const displayName = useManualAddress 
       ? `${recipientAddress.substring(0, 8)}...${recipientAddress.substring(recipientAddress.length - 6)}`
       : recipientName;
@@ -179,7 +170,6 @@ export default function SendMoney() {
                 return;
               }
 
-              // Send RLUSD payment on XRPL blockchain
               console.log('💸 Sending RLUSD payment on blockchain...');
               const parentWallet = Wallet.fromSeed(parentData.walletSeed);
               
@@ -191,7 +181,6 @@ export default function SendMoney() {
 
               console.log('✅ Payment sent! Hash:', txResult.result.hash);
 
-              // Create transaction record in Firestore
               try {
                 if (!useManualAddress && selectedStudent) {
                   console.log('💾 Saving transaction to Firestore...');
@@ -219,7 +208,6 @@ export default function SendMoney() {
                   console.log('   fromId:', user.uid);
                   console.log('   toAddress:', recipientAddress);
                   
-                  // Try to find a student with this wallet address
                   let studentUid = null;
                   let studentName = 'Manual Address';
                   
@@ -248,7 +236,7 @@ export default function SendMoney() {
                   
                   const txDoc = await addDoc(collection(db, 'transactions'), {
                     fromId: user.uid,
-                    toId: studentUid || recipientAddress, // Use UID if found, otherwise wallet address
+                    toId: studentUid || recipientAddress,
                     fromName: parentData?.name || 'Unknown',
                     toName: studentName,
                     amount: parseFloat(amount),
@@ -258,7 +246,7 @@ export default function SendMoney() {
                     status: 'completed',
                     note: note || '',
                     isManualAddress: true,
-                    recipientWalletAddress: recipientAddress, // Store wallet address for reference
+                    recipientWalletAddress: recipientAddress,
                   });
                   console.log('✅ Transaction saved with ID:', txDoc.id);
                 } else {
@@ -279,7 +267,6 @@ export default function SendMoney() {
                 `$${amount} RLUSD sent successfully!\n\nTo: ${recipientAddress.substring(0, 10)}...${recipientAddress.substring(recipientAddress.length - 4)}\n\nTransaction: ${txResult.result.hash.substring(0, 12)}...`
               );
               
-              // Reset form
               setSelectedStudent('');
               setManualAddress('');
               setAmount('');
@@ -289,7 +276,6 @@ export default function SendMoney() {
               
               let errorMessage = 'Failed to send payment';
               
-              // Parse common XRPL errors
               if (error.data?.error === 'tecNO_DST') {
                 errorMessage = 'Destination account does not exist on the ledger';
               } else if (error.data?.error === 'tecNO_LINE') {
@@ -321,7 +307,6 @@ export default function SendMoney() {
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <Text style={styles.title}>Send Money</Text>
 
-      {/* Toggle: Student or Manual Address */}
       <View style={styles.toggleContainer}>
         <TouchableOpacity
           style={[styles.toggleButton, !useManualAddress && styles.toggleButtonActive]}
@@ -347,7 +332,6 @@ export default function SendMoney() {
         </TouchableOpacity>
       </View>
 
-      {/* Student Selection OR Manual Address Input */}
       {!useManualAddress ? (
         <>
           <View style={styles.section}>
@@ -377,7 +361,6 @@ export default function SendMoney() {
             </TouchableOpacity>
           </View>
 
-          {/* Student Picker Modal */}
           <Modal
             visible={showStudentPicker}
             transparent={true}
@@ -442,7 +425,6 @@ export default function SendMoney() {
         </View>
       )}
 
-      {/* Recipient Info Display */}
       {(selectedStudentData || (useManualAddress && manualAddress)) && (
         <View style={styles.studentInfo}>
           <Ionicons name={useManualAddress ? "wallet" : "person-circle"} size={48} color="#007AFF" />
@@ -457,7 +439,6 @@ export default function SendMoney() {
         </View>
       )}
 
-      {/* Amount Input */}
       <View style={styles.section}>
         <Text style={styles.label}>Amount (RLUSD)</Text>
         <View style={styles.amountInputContainer}>
@@ -473,7 +454,6 @@ export default function SendMoney() {
         </View>
       </View>
 
-      {/* Preset Amounts */}
       <View style={styles.presetContainer}>
         {PRESET_AMOUNTS.map((preset) => (
           <TouchableOpacity
@@ -497,7 +477,6 @@ export default function SendMoney() {
         ))}
       </View>
 
-      {/* Note Input */}
       <View style={styles.section}>
         <Text style={styles.label}>Note (Optional)</Text>
         <TextInput
@@ -511,7 +490,6 @@ export default function SendMoney() {
         />
       </View>
 
-      {/* Transaction Details Preview */}
       {(selectedStudentData || (useManualAddress && manualAddress)) && amount && (
         <View style={styles.previewCard}>
           <Text style={styles.previewTitle}>Transaction Summary</Text>
@@ -534,7 +512,6 @@ export default function SendMoney() {
         </View>
       )}
 
-      {/* Send Button */}
       <TouchableOpacity
         style={[
           styles.sendButton,

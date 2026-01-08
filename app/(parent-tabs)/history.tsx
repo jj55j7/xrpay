@@ -38,12 +38,10 @@ export default function TransactionHistory() {
 
       if (!user) return;
 
-      // Fetch parent user document
       const parentDoc = await getDoc(doc(db, 'users', user.uid));
       const parentData = parentDoc.data();
 
       if (parentData?.studentIds && Array.isArray(parentData.studentIds)) {
-        // Build students list
         const studentsList: Student[] = [];
         for (const studentId of parentData.studentIds) {
           const studentDoc = await getDoc(doc(db, 'users', studentId));
@@ -57,7 +55,6 @@ export default function TransactionHistory() {
         setStudents(studentsList);
       }
 
-      // Fetch transactions for this parent
       console.log('🔍 Fetching parent transactions for:', user.uid);
       const transactionsQuery = query(
         collection(db, 'transactions'),
@@ -101,12 +98,10 @@ export default function TransactionHistory() {
     return true;
   });
 
-  // Calculate total sent
   const totalSent = filteredTransactions
     .reduce((sum, tx) => sum + (tx.amount || 0), 0)
     .toFixed(2);
 
-  // Get unique months from transactions
   const months = Array.from(
     new Set(
       transactions.map((tx) => {
@@ -120,7 +115,6 @@ export default function TransactionHistory() {
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <Text style={styles.title}>Transaction History</Text>
 
-      {/* Summary Card */}
       <View style={styles.summaryCard}>
         <View style={styles.summaryItem}>
           <Text style={styles.summaryLabel}>Total Transactions</Text>
@@ -133,7 +127,6 @@ export default function TransactionHistory() {
         </View>
       </View>
 
-      {/* Transactions List */}
       <Text style={styles.sectionTitle}>Transactions</Text>
       {filteredTransactions.length === 0 ? (
         <View style={styles.emptyState}>

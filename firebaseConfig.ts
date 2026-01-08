@@ -1,4 +1,3 @@
-// firebaseConfig.ts
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getApp, getApps, initializeApp } from 'firebase/app';
 import { getReactNativePersistence, initializeAuth } from 'firebase/auth';
@@ -14,10 +13,8 @@ const firebaseConfig = {
   measurementId: "G-MPERT55QRR"
 };
 
-// Prevent re-initialization
 let firebaseAppInstance = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
-// Initialize Auth with AsyncStorage persistence
 if (!getApps().some(app => app === firebaseAppInstance)) {
   firebaseAppInstance = initializeApp(firebaseConfig);
 }
@@ -27,16 +24,13 @@ try {
     persistence: getReactNativePersistence(AsyncStorage),
   });
 } catch (error: any) {
-  // Auth might already be initialized, that's okay
 }
 
-// Initialize Firestore with offline persistence
 try {
   initializeFirestore(firebaseAppInstance, {
     localCache: { kind: 'persistent' },
   });
 } catch (error: any) {
-  // Firestore already initialized
   getFirestore(firebaseAppInstance);
 }
 

@@ -1,6 +1,3 @@
-// Run this to setup a student wallet for receiving RLUSD
-// Usage: node setup-student-wallet.js YOUR_STUDENT_WALLET_SEED_HERE RLUSD_ISSUER_ADDRESS
-
 const xrpl = require('xrpl');
 
 async function setupWallet(seedFromArgs, rlusdIssuer) {
@@ -9,11 +6,9 @@ async function setupWallet(seedFromArgs, rlusdIssuer) {
   await client.connect();
 
   try {
-    // Load wallet from seed
     const wallet = xrpl.Wallet.fromSeed(seedFromArgs);
     console.log('✅ Loaded wallet:', wallet.address);
 
-    // Check current XRP balance
     let balance = '0';
     try {
       balance = await client.getXrpBalance(wallet.address);
@@ -26,7 +21,6 @@ async function setupWallet(seedFromArgs, rlusdIssuer) {
       }
     }
 
-    // If balance is 0, fund from faucet
     if (parseFloat(balance) < 10) {
       console.log('💸 Funding wallet from testnet faucet...');
       await client.fundWallet(wallet);
@@ -34,10 +28,8 @@ async function setupWallet(seedFromArgs, rlusdIssuer) {
       console.log('✅ New XRP Balance:', newBalance);
     }
 
-    // Setup RLUSD trustline
     console.log('🔗 Setting up RLUSD trustline to issuer:', rlusdIssuer);
     
-    // Convert "RLUSD" to hex format (required for non-standard 3-letter codes)
     const currencyHex = Buffer.from('RLUSD', 'utf-8').toString('hex').toUpperCase().padEnd(40, '0');
     console.log('   Currency hex:', currencyHex);
     
@@ -48,7 +40,7 @@ async function setupWallet(seedFromArgs, rlusdIssuer) {
         LimitAmount: {
           currency: currencyHex,
           issuer: rlusdIssuer,
-          value: '999999999', // Max trust limit
+          value: '999999999', 
         },
       },
       { wallet }
@@ -61,7 +53,6 @@ async function setupWallet(seedFromArgs, rlusdIssuer) {
       console.log('❌ Trustline failed:', trustlineResult.result.meta.TransactionResult);
     }
 
-    // Check RLUSD balance
     console.log('\n📊 Checking balances...');
     const balances = await client.request({
       command: 'account_lines',
@@ -89,7 +80,6 @@ async function setupWallet(seedFromArgs, rlusdIssuer) {
   }
 }
 
-// Get seed and issuer from command line
 const seed = process.argv[2];
 const issuer = process.argv[3];
 

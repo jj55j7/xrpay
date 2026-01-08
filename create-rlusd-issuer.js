@@ -1,4 +1,3 @@
-// Create a dedicated RLUSD issuer account for testing
 const xrpl = require('xrpl');
 
 async function createRLUSDIssuer() {
@@ -9,7 +8,6 @@ async function createRLUSDIssuer() {
   try {
     console.log('🎲 Creating RLUSD Issuer Account...\n');
     
-    // Fund a new wallet to be the RLUSD issuer
     const { wallet: issuerWallet, balance } = await client.fundWallet();
     
     console.log('✅ RLUSD Issuer Account Created!');

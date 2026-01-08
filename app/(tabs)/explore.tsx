@@ -25,14 +25,12 @@ export default function ReceiveScreen() {
             setWalletAddress(userData?.walletAddress || 'No wallet address');
             setWalletSeed(userData?.walletSeed || '');
           } else {
-            // Fallback to mock data if Firestore is offline
             setWalletAddress('rPEPPER7kfTD9w2To4CQk6UCfuHM9c6GDY');
             setWalletSeed('');
           }
         }
       } catch (error) {
         console.error('Error fetching wallet address:', error);
-        // Use mock data for demo
         setWalletAddress('rPEPPER7kfTD9w2To4CQk6UCfuHM9c6GDY');
       } finally {
         setLoading(false);
@@ -90,7 +88,6 @@ export default function ReceiveScreen() {
         Share your wallet address with your parent to receive money
       </Text>
 
-      {/* Wallet Address Card */}
       <View style={styles.addressCard}>
         <Text style={styles.addressLabel}>Your Wallet Address</Text>
         <View style={styles.addressBox}>
@@ -99,7 +96,6 @@ export default function ReceiveScreen() {
           </Text>
         </View>
         
-        {/* Action Buttons */}
         <View style={styles.actionButtons}>
           <TouchableOpacity style={styles.actionButton} onPress={copyToClipboard}>
             <Ionicons name="copy-outline" size={24} color="#007AFF" />
@@ -113,7 +109,6 @@ export default function ReceiveScreen() {
         </View>
       </View>
 
-      {/* Wallet Seed Card */}
       {walletSeed && (
         <View style={styles.seedCard}>
           <Text style={styles.seedLabel}>Your Wallet Seed</Text>
@@ -123,7 +118,6 @@ export default function ReceiveScreen() {
             </Text>
           </View>
           
-          {/* Action Buttons */}
           <View style={styles.actionButtons}>
             <TouchableOpacity style={styles.actionButton} onPress={copySeedToClipboard}>
               <Ionicons name="copy-outline" size={24} color="#007AFF" />
@@ -138,7 +132,6 @@ export default function ReceiveScreen() {
         </View>
       )}
 
-      {/* How to Receive Section */}
       <View style={styles.howToSection}>
         <Text style={styles.howToTitle}>How to Receive Money</Text>
         

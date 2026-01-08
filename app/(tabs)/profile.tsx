@@ -55,7 +55,6 @@ export default function ProfileScreen() {
             const userData = userDoc.data() as UserData;
             setUserData(userData);
             
-            // Fetch connected parents
             const parentIds = userData.parentIds || [];
             const parentsList: Parent[] = [];
             for (const parentId of parentIds) {
@@ -70,7 +69,6 @@ export default function ProfileScreen() {
             setParents(parentsList);
             setLoading(false);
             
-            // Fetch transactions separately - don't let this fail the user data load
             try {
               console.log('🔍 Fetching profile transactions for student:', user.uid);
               const transactionsQuery = query(
@@ -96,13 +94,11 @@ export default function ProfileScreen() {
               console.error('   Error code:', txError.code);
               console.error('   Error message:', txError.message);
               
-              // Check if it's a missing index error
               if (txError.code === 'failed-precondition' || txError.message?.includes('index')) {
                 console.error('\n🔗 MISSING FIRESTORE INDEX!');
                 console.error('   Create the index by clicking the link in this error:');
                 console.error('   ' + txError.message);
                 
-                // Extract and show the link if available
                 const linkMatch = txError.message?.match(/(https:\/\/console\.firebase\.google\.com\/[^\s]+)/);
                 if (linkMatch) {
                   console.error('\n   Direct link: ' + linkMatch[1]);
@@ -177,7 +173,6 @@ export default function ProfileScreen() {
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <Text style={styles.title}>Transaction History</Text>
 
-      {/* Profile Card */}
       <View style={styles.profileCard}>
         <View style={styles.avatarContainer}>
           <Ionicons name="person-circle" size={80} color="#007AFF" />
@@ -191,7 +186,6 @@ export default function ProfileScreen() {
         )}
       </View>
 
-      {/* Connected Parents */}
       <View style={styles.infoCard}>
         <Text style={styles.sectionTitle}>Connected Parents</Text>
         {parents.length === 0 ? (
@@ -208,7 +202,6 @@ export default function ProfileScreen() {
         )}
       </View>
 
-      {/* Transaction History */}
       <View style={styles.infoCard}>
         <Text style={styles.sectionTitle}>Transaction History</Text>
         {transactions.length === 0 ? (
@@ -245,7 +238,6 @@ export default function ProfileScreen() {
         )}
       </View>
 
-      {/* Logout Button */}
       <View style={styles.logoutContainer}>
         <Button 
           title={signingOut ? 'Signing Out...' : 'Logout'} 

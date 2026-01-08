@@ -1,6 +1,3 @@
-// Check transaction details
-// Usage: node check-transaction.js TX_HASH
-
 const xrpl = require('xrpl');
 
 async function checkTransaction(txHash) {

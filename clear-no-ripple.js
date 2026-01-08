@@ -1,6 +1,3 @@
-// Clear NoRipple flag from issuer's side of trustlines
-// Usage: node clear-no-ripple.js ISSUER_SEED HOLDER_ADDRESS
-
 const xrpl = require('xrpl');
 
 async function clearNoRipple(issuerSeed, holderAddress) {
@@ -13,19 +10,17 @@ async function clearNoRipple(issuerSeed, holderAddress) {
     console.log('✅ Issuer wallet loaded:', issuerWallet.address);
     console.log('🎯 Clearing NoRipple for holder:', holderAddress);
 
-    // Convert RLUSD to hex
     const currencyHex = Buffer.from('RLUSD', 'utf-8').toString('hex').toUpperCase().padEnd(40, '0');
 
-    // Set trustline from issuer's side with ClearNoRipple flag
     const trustSetTx = {
       TransactionType: 'TrustSet',
       Account: issuerWallet.address,
       LimitAmount: {
         currency: currencyHex,
         issuer: holderAddress,
-        value: '0' // Issuer sets 0 limit to the holder
+        value: '0'
       },
-      Flags: 262144 // tfClearNoRipple
+      Flags: 262144
     };
 
     console.log('📤 Submitting TrustSet with ClearNoRipple flag...');

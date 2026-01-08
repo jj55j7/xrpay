@@ -1,6 +1,3 @@
-// Issue RLUSD tokens from issuer to a recipient
-// Usage: node issue-rlusd.js ISSUER_SEED RECIPIENT_ADDRESS AMOUNT
-
 const xrpl = require('xrpl');
 
 async function issueRLUSD(issuerSeed, recipientAddress, amount) {
@@ -9,13 +6,10 @@ async function issueRLUSD(issuerSeed, recipientAddress, amount) {
   await client.connect();
 
   try {
-    // Load issuer wallet
     const issuerWallet = xrpl.Wallet.fromSeed(issuerSeed);
     console.log('✅ Issuer loaded:', issuerWallet.address);
     console.log('📤 Issuing', amount, 'RLUSD to:', recipientAddress);
 
-    // Send RLUSD payment from issuer to recipient
-    // Convert "RLUSD" to hex format
     const currencyHex = Buffer.from('RLUSD', 'utf-8').toString('hex').toUpperCase().padEnd(40, '0');
     
     const payment = {
@@ -55,7 +49,6 @@ async function issueRLUSD(issuerSeed, recipientAddress, amount) {
   }
 }
 
-// Get arguments
 const issuerSeed = process.argv[2];
 const recipientAddress = process.argv[3];
 const amount = process.argv[4] || '1000';

@@ -1,6 +1,3 @@
-// Check trustline details
-// Usage: node check-trustline.js WALLET_ADDRESS ISSUER_ADDRESS
-
 const xrpl = require('xrpl');
 
 async function checkTrustline(walletAddress, issuerAddress) {
