@@ -87,19 +87,29 @@ class XRPLService {
 
   // Get USD balance
   async getRLUSDBalance(walletAddress: string): Promise<string> {
-    const client = await this.connect();
+    try {
+      const client = await this.connect();
 
-    const response = await client.request({
-      command: 'account_lines',
-      account: walletAddress,
-      ledger_index: 'validated'
-    });
+      const response = await client.request({
+        command: 'account_lines',
+        account: walletAddress,
+        ledger_index: 'validated'
+      });
 
-    const usdLine = response.result.lines.find(
-      (line: any) => line.account === CURRENCY_ISSUER
-    );
+      const usdLine = response.result.lines.find(
+        (line: any) => line.account === CURRENCY_ISSUER
+      );
 
-    return usdLine ? usdLine.balance : '0';
+      return usdLine ? usdLine.balance : '0';
+    } catch (error: any) {
+      // Return 0 for accounts not yet activated
+      if (error.data?.error === 'actNotFound' || error.message?.includes('Account not found')) {
+        console.log('Account not yet activated, returning 0 balance');
+        return '0';
+      }
+      console.error('Error fetching RLUSD balance:', error);
+      throw error;
+    }
   }
 
   // Get transaction details
