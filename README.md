@@ -102,7 +102,7 @@ This process:
 
 ### 3. Setup Student Wallet
 
-Set up a student wallet with RLUSD trustline. STUDENT_SEED can be found in the Recevie Money feature of the app(Student View):
+Set up a student wallet with RLUSD trustline. STUDENT_SEED can be found in the Receive Money feature of the app(Student View):
 
 ```bash
 node setup-student-wallet.js <STUDENT_SEED> <ISSUER_ADDRESS>
