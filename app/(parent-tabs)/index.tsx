@@ -65,6 +65,7 @@ export default function ParentDashboard() {
   const [parentWalletAddress, setParentWalletAddress] = useState('');
   const [rlusdBalance, setRlusdBalance] = useState('0.00');
   const [xrpBalance, setXrpBalance] = useState('0.00');
+  const [parentWalletSeed, setParentWalletSeed] = useState('');
   
   // Add these states
   const [pendingRequests, setPendingRequests] = useState<ConnectionRequest[]>([]);
@@ -248,6 +249,7 @@ export default function ParentDashboard() {
       if (parentData) {
         setParentName(parentData.name || 'Parent');
         setParentWalletAddress(parentData.walletAddress || '');
+        setParentWalletSeed(parentData.walletSeed || '');
         
         // Fetch live RLUSD balance from blockchain
         if (parentData.walletAddress) {
@@ -377,6 +379,14 @@ export default function ParentDashboard() {
             <Text style={styles.addressText} numberOfLines={1}>
               {parentWalletAddress}
             </Text>
+            {parentWalletSeed && (
+              <>
+                <Text style={styles.seedLabel}>Wallet Seed</Text>
+                <Text style={styles.seedText} numberOfLines={1}>
+                  {parentWalletSeed}
+                </Text>
+              </>
+            )}
           </View>
         )}
       </View>
@@ -638,6 +648,18 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   addressText: {
+    fontSize: 12,
+    fontFamily: 'monospace',
+    color: '#fff',
+  },
+  seedLabel: {
+    fontSize: 11,
+    color: '#fff',
+    opacity: 0.8,
+    marginTop: 8,
+    marginBottom: 4,
+  },
+  seedText: {
     fontSize: 12,
     fontFamily: 'monospace',
     color: '#fff',

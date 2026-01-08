@@ -20,6 +20,7 @@ interface WalletData {
   address: string;
   balance: string;
   xrpBalance: string;
+  seed: string;
 }
 
 export default function HomeScreen() {
@@ -63,6 +64,7 @@ export default function HomeScreen() {
             address: userData.walletAddress,
             balance: liveBalance,
             xrpBalance: userData.xrpBalance || '0.00',
+            seed: userData.walletSeed || '',
           });
         }
       } catch (userError) {
@@ -251,6 +253,16 @@ export default function HomeScreen() {
                   {walletData?.address}
                 </Text>
               </View>
+              {walletData?.seed && (
+                <>
+                  <Text style={styles.walletSeedLabel}>Your Wallet Seed</Text>
+                  <View style={styles.walletSeedBox}>
+                    <Text style={styles.walletSeed} selectable>
+                      {walletData.seed}
+                    </Text>
+                  </View>
+                </>
+              )}
               <TouchableOpacity
                 style={styles.copyButton}
                 onPress={async () => {
@@ -474,6 +486,26 @@ const styles = StyleSheet.create({
     borderColor: '#e0e0e0',
   },
   walletAddress: {
+    fontSize: 13,
+    fontFamily: 'monospace',
+    color: '#333',
+    lineHeight: 20,
+  },
+  walletSeedLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#333',
+    marginTop: 16,
+    marginBottom: 12,
+  },
+  walletSeedBox: {
+    backgroundColor: '#f5f5f5',
+    borderRadius: 12,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+  },
+  walletSeed: {
     fontSize: 13,
     fontFamily: 'monospace',
     color: '#333',

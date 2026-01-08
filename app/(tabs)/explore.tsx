@@ -8,6 +8,7 @@ import { Alert, ScrollView, Share, StyleSheet, Text, TouchableOpacity, View } fr
 
 export default function ReceiveScreen() {
   const [walletAddress, setWalletAddress] = useState<string>('');
+  const [walletSeed, setWalletSeed] = useState<string>('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -20,10 +21,13 @@ export default function ReceiveScreen() {
         if (user) {
           const userDoc = await getDoc(doc(db, 'users', user.uid));
           if (userDoc.exists()) {
-            setWalletAddress(userDoc.data()?.walletAddress || 'No wallet address');
+            const userData = userDoc.data();
+            setWalletAddress(userData?.walletAddress || 'No wallet address');
+            setWalletSeed(userData?.walletSeed || '');
           } else {
             // Fallback to mock data if Firestore is offline
             setWalletAddress('rPEPPER7kfTD9w2To4CQk6UCfuHM9c6GDY');
+            setWalletSeed('');
           }
         }
       } catch (error) {
@@ -48,6 +52,22 @@ export default function ReceiveScreen() {
       await Share.share({
         message: `Send money to my wallet address: ${walletAddress}`,
         title: 'My Wallet Address',
+      });
+    } catch (error) {
+      console.error('Error sharing:', error);
+    }
+  };
+
+  const copySeedToClipboard = async () => {
+    await Clipboard.setStringAsync(walletSeed);
+    Alert.alert('Copied!', 'Wallet seed copied to clipboard');
+  };
+
+  const shareSeed = async () => {
+    try {
+      await Share.share({
+        message: `My wallet seed: ${walletSeed}`,
+        title: 'My Wallet Seed',
       });
     } catch (error) {
       console.error('Error sharing:', error);
@@ -92,6 +112,31 @@ export default function ReceiveScreen() {
           </TouchableOpacity>
         </View>
       </View>
+
+      {/* Wallet Seed Card */}
+      {walletSeed && (
+        <View style={styles.seedCard}>
+          <Text style={styles.seedLabel}>Your Wallet Seed</Text>
+          <View style={styles.seedBox}>
+            <Text style={styles.seedText} selectable>
+              {walletSeed}
+            </Text>
+          </View>
+          
+          {/* Action Buttons */}
+          <View style={styles.actionButtons}>
+            <TouchableOpacity style={styles.actionButton} onPress={copySeedToClipboard}>
+              <Ionicons name="copy-outline" size={24} color="#007AFF" />
+              <Text style={styles.actionButtonText}>Copy</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity style={styles.actionButton} onPress={shareSeed}>
+              <Ionicons name="share-outline" size={24} color="#007AFF" />
+              <Text style={styles.actionButtonText}>Share</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
 
       {/* How to Receive Section */}
       <View style={styles.howToSection}>
@@ -187,6 +232,35 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   addressText: {
+    fontSize: 13,
+    fontFamily: 'monospace',
+    color: '#000',
+    textAlign: 'center',
+  },
+  seedCard: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  seedLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#666',
+    marginBottom: 12,
+  },
+  seedBox: {
+    backgroundColor: '#f5f5f5',
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 16,
+  },
+  seedText: {
     fontSize: 13,
     fontFamily: 'monospace',
     color: '#000',
